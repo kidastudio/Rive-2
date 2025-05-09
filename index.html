@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rive Hello World</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container">
+      <canvas id="canvas" width="720" height="576"></canvas>
+      
+      <div class="controls">
+        <div class="buttons">
+          <button class="control-btn" data-state="Talking">Talking</button>
+          <button class="control-btn" data-state="Listen">Listen</button>
+          <button class="control-btn" data-state="Sad">Sad</button>
+          <button class="control-btn" data-state="Happy">Happy</button>
+        </div>
+        <div class="slider-container">
+          <label class="slider-label">Mouth Speed Modifier</label>
+          <div class="slider-values">
+            <span>-100</span>
+            <input type="range" class="slider" id="mouthSpeed" min="-100" max="0" value="0">
+            <span>0</span>
+          </div>
+          <span class="current-value">Current: 0</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/@rive-app/webgl2"></script>
+    <script>
+      let r;
+      
+     
+
+      
+
+      r = new rive.Rive({
+        src: "riv/wyzo_5.riv",
+        canvas: document.getElementById("canvas"),
+        autoplay: true,
+        stateMachines: "State Machine 1",
+        layout: new rive.Layout({
+          fit: rive.Fit.Contain,
+          alignment: rive.Alignment.Center,
+        }),
+        onLoad: () => {
+          const inputs = r.stateMachineInputs("State Machine 1");
+          const buttons = document.querySelectorAll('.control-btn');
+          const mouthSpeedSlider = document.getElementById('mouthSpeed');
+          const sliderContainer = document.querySelector('.slider-container');
+
+          // Handle window resizing
+          const resizeCanvas = () => {
+            const container = document.querySelector('.container');
+            const canvas = document.getElementById('canvas');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            r.resizeDrawingSurfaceToCanvas();
+          };
+
+          // Initial resize and add resize listener
+          resizeCanvas();
+          window.addEventListener('resize', resizeCanvas);
+
+          // Set up button click handlers
+          buttons.forEach(button => {
+            const stateName = button.dataset.state;
+            const input = inputs.find(input => input.name === stateName);
+            
+            if (input) {
+              button.addEventListener('click', () => {
+                const wasActive = button.classList.contains('active');
+                
+                // First, deactivate all buttons and enable them
+                buttons.forEach(btn => {
+                  btn.classList.remove('active');
+                  btn.disabled = false;
+                  if (btn.dataset.state !== 'Talking') {
+                    const btnInput = inputs.find(input => input.name === btn.dataset.state);
+                    if (btnInput) btnInput.value = false;
+                  }
+                });
+
+                // If the button wasn't active before, activate it and disable others
+                if (!wasActive) {
+                  button.classList.add('active');
+                  buttons.forEach(btn => {
+                    if (btn !== button) {
+                      btn.disabled = true;
+                    }
+                  });
+                  input.value = true;
+                } else {
+                  input.value = false;
+                }
+                
+                // Handle slider visibility for Talking button
+                if (stateName === 'Talking') {
+                  if (!wasActive) {
+                    sliderContainer.classList.add('visible');
+                  } else {
+                    sliderContainer.classList.remove('visible');
+                    // Reset slider value when hiding
+                    mouthSpeedSlider.value = 0;
+                    mouthSpeedInput.value = 0;
+                    document.querySelector('.current-value').textContent = 'Current: 0';
+                  }
+                }
+              });
+            }
+          });
+
+          // Set up mouth speed slider
+          const mouthSpeedInput = inputs.find(input => input.name === "MouthSpeed");
+          if (mouthSpeedInput) {
+            // Initialize with default value
+            mouthSpeedInput.value = 0;
+            
+            mouthSpeedSlider.addEventListener('input', (e) => {
+              mouthSpeedInput.value = parseFloat(e.target.value);
+              document.querySelector('.current-value').textContent = `Current: ${e.target.value}`;
+            });
+          }
+
+          r.resizeDrawingSurfaceToCanvas();
+        },
+      });
+    </script>
+  </body>
+</html>

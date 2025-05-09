@@ -1,0 +1,106 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+}
+
+.controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.control-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: rgba(240, 240, 240, 0.8);
+    border: 2px solid rgba(204, 204, 204, 0.8);
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(200, 200, 200, 0.8);
+}
+
+.control-btn.active {
+    background-color: rgba(76, 175, 80, 0.9);
+    color: white;
+    border-color: rgba(69, 160, 73, 0.9);
+}
+
+.slider-container {
+    width: 300px;
+    display: none;  /* Hidden by default */
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.slider-container.visible {
+    display: flex;
+    opacity: 1;
+}
+
+.slider-label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.slider-values {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.current-value {
+    color: #666;
+    font-size: 14px;
+}
+
+.slider {
+    width: 100%;
+    flex: 1;
+}
